@@ -12,6 +12,7 @@ using NBrightDNN.controls;
 using NBrightCore.common;
 using System.Xml;
 using Nevoweb.DNN.NBrightBuy.Components;
+using DotNetNuke.Framework;
 
 namespace Nevoweb.DNN.NBrightBuy.Base
 {
@@ -157,4 +158,37 @@ namespace Nevoweb.DNN.NBrightBuy.Base
 
 
     }
+
+    public class NBrightBuyCDefault : CDefault
+    {
+        public NBrightBuyController ModCtrl;
+        public ModSettings ModSettings;
+
+        public DotNetNuke.Framework.CDefault BasePage
+        {
+            get { return (DotNetNuke.Framework.CDefault)this.Page; }
+        }
+
+        protected override void OnInit(EventArgs e)
+        {
+
+            ModCtrl = new NBrightBuyController();
+
+            base.OnInit(e);
+
+            #region "Get all Settings for module"
+            //get Model Level Settings
+            ModSettings = new ModSettings(-1, new System.Collections.Hashtable());
+
+            #endregion
+
+            //add template provider to NBright Templating
+            //TODO: Remove when BO is all razor.
+            NBrightCore.providers.GenXProviderManager.AddProvider("NBrightBuy,Nevoweb.DNN.NBrightBuy.render.GenXmlTemplateExt");
+
+        }
+
+
+    }
+
 }

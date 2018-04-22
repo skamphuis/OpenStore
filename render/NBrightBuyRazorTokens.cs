@@ -1448,6 +1448,29 @@ namespace NBrightBuy.render
 
         #endregion
 
+
+
+
+        public IEncodedString AdminMenu()
+        {
+            var strOut = "";
+            var c1 = LoadControl("/DesktopModules/NBright/NBrightBuy/Admin/Menu.ascx");
+            strOut = c1.ToString();
+            return new RawString(strOut);
+        }
+        public IEncodedString AdminContainer()
+        {
+            var strOut = "";
+            var c1 = LoadControl("/DesktopModules/NBright/NBrightBuy/Admin/Container.ascx");
+            strOut = c1.ToString();
+            return new RawString(strOut);
+        }
+
+        private object LoadControl(string v)
+        {
+            throw new NotImplementedException();
+        }
+
         #endregion
 
     }

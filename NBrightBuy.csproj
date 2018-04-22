@@ -200,6 +200,13 @@
     <Compile Include="Base\NBrightBuySettingBase.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
+    <Compile Include="Admin\AdminPanel.aspx.cs">
+      <DependentUpon>AdminPanel.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Admin\AdminPanel.aspx.designer.cs">
+      <DependentUpon>AdminPanel.aspx.cs</DependentUpon>
+    </Compile>
     <Compile Include="ProductListAjaxFilter.ascx.cs">
       <DependentUpon>ProductListAjaxFilter.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -480,6 +487,9 @@
     <Content Include="Admin\Orders.ascx">
       <SubType>ASPXCodeBehind</SubType>
     </Content>
+    <Content Include="Admin\AdminPanel.aspx">
+      <SubType>ASPXCodeBehind</SubType>
+    </Content>
     <Content Include="ProductListAjaxFilter.ascx">
       <SubType>ASPXCodeBehind</SubType>
     </Content>
@@ -573,6 +583,8 @@
     <Content Include="Themes\ClassicAjax\css\images\ui-icons_454545_256x240.png" />
     <Content Include="Themes\ClassicAjax\css\images\ui-icons_888888_256x240.png" />
     <Content Include="Themes\ClassicAjax\css\images\ui-icons_cd0a0a_256x240.png" />
+    <None Include="Themes\config\default\Admin_Panel.cshtml" />
+    <None Include="Themes\config\default\Admin_Panel_head.cshtml" />
     <Content Include="Themes\config\img\asterisk.png" />
     <Content Include="Themes\config\img\invalid.png" />
     <Content Include="Themes\config\img\openstore-logo.png" />
