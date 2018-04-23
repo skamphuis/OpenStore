@@ -104,7 +104,6 @@ namespace Nevoweb.DNN.NBrightBuy.Components
         public static string currencysymbol = "currencysymbol";
         public static string currencyculturecode = "currencyculturecode";
         public static string merchantculturecode = "merchantculturecode";
-        public static string bonoimageicon = "bonoimageicon";
         public static string alloweditorder = "alloweditorder";
         public static string shareproducts = "shareproducts";
         public static string sharecategories = "sharecategories";
@@ -143,7 +142,6 @@ namespace Nevoweb.DNN.NBrightBuy.Components
         public static string checkouttab = "checkouttab";
         public static string ddldetailtabid = "ddldetailtabid";
         public static string productlisttab = "productlisttab";
-        public static string pagesize = "pagesize";
         public static string folderuploads = "folderuploads";
         public static string folderdocs = "folderdocs";
         public static string folderimages = "folderimages";

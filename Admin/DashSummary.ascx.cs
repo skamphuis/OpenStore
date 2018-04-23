@@ -44,31 +44,13 @@ namespace Nevoweb.DNN.NBrightBuy.Admin
         override protected void OnInit(EventArgs e)
         {
             base.OnInit(e);
+            // inject any pageheader we need
+            var nbi = new NBrightInfo();
+            nbi.Lang = Utils.GetCurrentCulture();
+            nbi.PortalId = PortalId;
 
-            try
-            {
-                // Get Display Header
-                var rpDashTempl = ModCtrl.GetTemplateData(ModSettings, "dashboard.html", Utils.GetCurrentCulture(), DebugMode);
-                rpDash.ItemTemplate = NBrightBuyUtils.GetGenXmlTemplate(rpDashTempl, ModSettings.Settings(), PortalSettings.HomeDirectory);
-
-                var rpDataHTempl = ModCtrl.GetTemplateData(ModSettings, "dashordersheader.html", Utils.GetCurrentCulture(), DebugMode);
-                rpDataH.ItemTemplate = NBrightBuyUtils.GetGenXmlTemplate(rpDataHTempl, ModSettings.Settings(), PortalSettings.HomeDirectory);
-
-                var rpDataTempl = ModCtrl.GetTemplateData(ModSettings, "dashordersbody.html", Utils.GetCurrentCulture(), DebugMode);
-                rpData.ItemTemplate = NBrightBuyUtils.GetGenXmlTemplate(rpDataTempl, ModSettings.Settings(), PortalSettings.HomeDirectory);
-
-                var rpDataFTempl = ModCtrl.GetTemplateData(ModSettings, "dashordersfooter.html", Utils.GetCurrentCulture(), DebugMode);
-                rpDataF.ItemTemplate = NBrightBuyUtils.GetGenXmlTemplate(rpDataFTempl, ModSettings.Settings(), PortalSettings.HomeDirectory);
-
-            }
-            catch (Exception exc)
-            {
-                //display the error on the template (don;t want to log it here, prefer to deal with errors directly.)
-                var l = new Literal();
-                l.Text = exc.ToString();
-                phData.Controls.Add(l);
-            }
-
+            var pageheaderTempl = NBrightBuyUtils.RazorTemplRender("Admin_Dashboard_head.cshtml", 0, "", nbi, "/DesktopModules/NBright/NBrightBuy", "config", Utils.GetCurrentCulture(), StoreSettings.Current.Settings());
+            PageIncludes.IncludeTextInHeader(Page, pageheaderTempl);
         }
 
         protected override void OnLoad(EventArgs e)
@@ -92,70 +74,30 @@ namespace Nevoweb.DNN.NBrightBuy.Admin
 
         private void PageLoad()
         {
-            #region "get Dashboard"
-
-            bool forceRefresh = Utils.RequestParam(Context, "refresh") == "1";
-            var statsInfo = GetStats(PortalId, forceRefresh);
-            var statsData = new NBrightInfo(true);
-
-            #endregion
-
-            #region "get order list"
-
-            var orderList = new List<NBrightInfo>();
-            var nodList = statsInfo.XMLDoc.SelectNodes("root/orders/*");
-            if (nodList != null)
+            if (NBrightBuyUtils.CheckRights()) // limit module data to NBS security roles
             {
-                foreach (XmlNode nod in nodList)
-                {
-                    var nbi = new NBrightInfo();
-                    nbi.FromXmlItem(nod.OuterXml);
-                    var xmlData = nod.SelectSingleNode("genxml/genxml");
-                    if (xmlData != null) nbi.XMLData = xmlData.OuterXml;
-                    orderList.Add(nbi);
-                }
-            }
+                bool forceRefresh = Utils.RequestParam(Context, "refresh") == "1";
+                var statsInfo = GetStats(PortalId, forceRefresh);
+                var statsData = new NBrightInfo(true);
 
-            #endregion
+                RazorTemplate = "Admin_Dashboard.cshtml";
 
-            DoDetail(rpDash, statsInfo); // dashboard
+                statsInfo.PortalId = PortalId;
+                statsInfo.ModuleId = 0;
+                statsInfo.Lang = Utils.GetCurrentCulture();
+                statsInfo.GUIDKey = RazorTemplate;
+                statsInfo.ItemID = -1;
 
-            DoDetail(rpDataH, statsInfo); // orders header
+                var strOut = NBrightBuyUtils.RazorTemplRender(RazorTemplate, 0, "", statsInfo, "/DesktopModules/NBright/NBrightBuy", "config", Utils.GetCurrentCulture(), StoreSettings.Current.Settings());
+                var lit = new Literal();
+                lit.Text = strOut;
+                phData.Controls.Add(lit);
 
-            rpData.DataSource = orderList; // orders body
-            rpData.DataBind();
-
-            DoDetail(rpDataF, statsInfo); // orders footer
-
-
-
-        }
-
-        #endregion
-
-        #region  "Events "
-
-        protected void CtrlItemCommand(object source, RepeaterCommandEventArgs e)
-        {
-            var cArg = e.CommandArgument.ToString();
-            var param = new string[3];
-
-            switch (e.CommandName.ToLower())
-            {
-                case "refresh":
-                    param[0] = "refresh=1";
-                    Response.Redirect(Globals.NavigateURL(TabId, "", param), true);
-                    break;
-                case "editorder":
-                    param[0] = "";
-                    Response.Redirect(Globals.NavigateURL(TabId, "", param), true);
-                    break;
             }
 
         }
 
         #endregion
-
 
         private NBrightInfo GetStats(int portalId, bool forceRefresh = false)
         {

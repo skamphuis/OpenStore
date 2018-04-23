@@ -1,0 +1,37 @@
+@inherits NBrightBuy.render.NBrightBuyRazorTokens<NBrightDNN.NBrightRazor>
+    @using DotNetNuke.Entities.Users
+    @using NBrightDNN
+
+    @AddMetaData("resourcepath", "/DesktopModules/NBright/NBrightBuy/App_LocalResources/")
+
+
+    <!-- fields required to send required ajax cart to server -->
+    <span id="settingsparams">
+        <input id="razortemplate" type="hidden" value="Admin_SettingsDetail.cshtml" />
+        <input id="themefolder" type="hidden" value="config" />
+        <input id="uilang" type="hidden" value="@Model.Lang" />
+        <input id="selecteditemid" type="hidden" value="" />
+        <input id="movepluginsid" type="hidden" value="" />
+        <input id="movetopluginsid" type="hidden" value="" />
+    </span>
+
+
+    <div id="loader" class="processing" style="display:none;">@ResourceKey("General.ProcessingDiv")</div>
+
+    <div id="pageactionssource">
+        <!-- Page actions are moved into header bar - also exist at page bottom-->
+        <div class="col-xs-9 col-sm-9">
+            <a href="javascript:void(0)" class="show-sidebar">
+                <i class="fa fa-bars"></i>
+            </a>
+            <div class="actionbuttonwrapper">
+                <a id="settingadmin_cmdSave" class="btn btn-primary " href="javascript:void(0)">@ResourceKey("General.cmdSaveButton")</a>
+                <a id="settingadmin_cmdReturn" class="btn btn-default " href="javascript:void(0)">@ResourceKey("General.cmdReturnButton")</a>
+            </div>
+        </div>
+        <div class="col-xs-3 col-sm-3 top-panel-right">
+        </div>
+    </div>
+
+    <div id="datadisplay"></div>
+

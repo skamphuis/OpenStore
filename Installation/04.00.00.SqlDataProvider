@@ -252,7 +252,7 @@ SET @rtndata +=  (select count(itemid) as [status11] FROM {databaseOwner}[{objec
 SET @rtndata +=  (select count(itemid) as [status12] FROM {databaseOwner}[{objectQualifier}NBrightBuy] where typecode = 'ORDER' and PortalId = @PortalId and GUIDKey = '120' FOR XML RAW , ELEMENTS)
 	
 
-SET @getdata =  (SELECT top(10) [ItemId] as [itemid]
+SET @getdata =  (SELECT top 10 [ItemId] as [itemid]
       ,[PortalId] as [portalid]
       ,[ModuleId] as [moduleid]
       ,[TypeCode] as [typecode]
@@ -268,7 +268,9 @@ SET @getdata =  (SELECT top(10) [ItemId] as [itemid]
   FROM {databaseOwner}[{objectQualifier}NBrightBuy]
   where typecode = 'ORDER'
   and PortalId = @PortalId
-  and (GUIDKey = '040' or GUIDKey = '050'  or GUIDKey = '060')
+  and (XMLData.value('(genxml/dropdownlist/orderstatus)[1]','nvarchar(max)') = '040' 
+  or XMLData.value('(genxml/dropdownlist/orderstatus)[1]','nvarchar(max)')  = '050'  
+  or XMLData.value('(genxml/dropdownlist/orderstatus)[1]','nvarchar(max)')  = '060')
   order by ModifiedDate desc FOR XML RAW ('item'), root ('orders'), ELEMENTS)
 
   SET @rtndata += ISNULL(@getdata,'') 

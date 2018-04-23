@@ -174,13 +174,6 @@
     <Compile Include="Admin\Plugins.ascx.designer.cs">
       <DependentUpon>Plugins.ascx.cs</DependentUpon>
     </Compile>
-    <Compile Include="Admin\Menu.ascx.cs">
-      <DependentUpon>Menu.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Admin\Menu.ascx.designer.cs">
-      <DependentUpon>Menu.ascx.cs</DependentUpon>
-    </Compile>
     <Compile Include="Admin\Orders.ascx.cs">
       <DependentUpon>Orders.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -207,6 +200,8 @@
     <Compile Include="Admin\AdminPanel.aspx.designer.cs">
       <DependentUpon>AdminPanel.aspx.cs</DependentUpon>
     </Compile>
+    <Compile Include="Components\AdminPanel\AdminPanelUtils.cs" />
+    <Compile Include="Components\Settings\SettingsFunctions.cs" />
     <Compile Include="ProductListAjaxFilter.ascx.cs">
       <DependentUpon>ProductListAjaxFilter.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -368,13 +363,6 @@
     <Compile Include="AddressAdminSettings.ascx.designer.cs">
       <DependentUpon>AddressAdminSettings.ascx.cs</DependentUpon>
     </Compile>
-    <Compile Include="Admin\Container.ascx.cs">
-      <DependentUpon>Container.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Admin\Container.ascx.designer.cs">
-      <DependentUpon>Container.ascx.cs</DependentUpon>
-    </Compile>
     <Compile Include="Payment.ascx.cs">
       <DependentUpon>Payment.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -481,9 +469,6 @@
     <Content Include="Admin\Plugins.ascx">
       <SubType>ASPXCodeBehind</SubType>
     </Content>
-    <Content Include="Admin\Menu.ascx">
-      <SubType>ASPXCodeBehind</SubType>
-    </Content>
     <Content Include="Admin\Orders.ascx">
       <SubType>ASPXCodeBehind</SubType>
     </Content>
@@ -541,9 +526,6 @@
     <Content Include="AddressAdminSettings.ascx">
       <SubType>ASPXCodeBehind</SubType>
     </Content>
-    <Content Include="Admin\Container.ascx">
-      <SubType>ASPXCodeBehind</SubType>
-    </Content>
     <Content Include="Payment.ascx">
       <SubType>ASPXCodeBehind</SubType>
     </Content>
@@ -583,11 +565,17 @@
     <Content Include="Themes\ClassicAjax\css\images\ui-icons_454545_256x240.png" />
     <Content Include="Themes\ClassicAjax\css\images\ui-icons_888888_256x240.png" />
     <Content Include="Themes\ClassicAjax\css\images\ui-icons_cd0a0a_256x240.png" />
-    <None Include="Themes\config\default\Admin_Panel.cshtml" />
+    <None Include="Themes\config\default\Admin_Panel_top.cshtml" />
+    <None Include="Themes\config\default\Admin_Panel_foot.cshtml" />
     <None Include="Themes\config\default\Admin_Panel_head.cshtml" />
+    <None Include="Themes\config\default\Admin_Dashboard.cshtml" />
+    <None Include="Themes\config\default\Admin_Settings_head.cshtml" />
+    <None Include="Themes\config\default\Admin_SettingsDetail.cshtml" />
+    <None Include="Themes\config\default\Admin_Settings.cshtml" />
     <Content Include="Themes\config\img\asterisk.png" />
     <Content Include="Themes\config\img\invalid.png" />
     <Content Include="Themes\config\img\openstore-logo.png" />
+    <Content Include="Themes\config\js\admin_settings.js" />
     <Content Include="Themes\Default\css\ClientAccount.css" />
     <Content Include="Themes\Default\css\Checkout.css" />
     <Content Include="Themes\Default\img\email-facebook.gif" />
@@ -712,10 +700,6 @@
     <Content Include="Themes\config\default\css\style-nbb.css" />
     <Content Include="Themes\config\default\css\style.css" />
     <Content Include="Themes\config\default\css\style.min.css" />
-    <Content Include="Themes\config\default\dashboard.html" />
-    <Content Include="Themes\config\default\dashordersbody.html" />
-    <Content Include="Themes\config\default\dashordersfooter.html" />
-    <Content Include="Themes\config\default\dashordersheader.html" />
     <None Include="Themes\config\default\datepicker.cshtml" />
     <Content Include="Themes\config\default\fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Themes\config\default\img\8962691008_7f489395c9_m.jpg" />

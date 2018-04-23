@@ -37,6 +37,7 @@ using Nevoweb.DNN.NBrightBuy.Components.Category;
 using Nevoweb.DNN.NBrightBuy.Components.ItemLists;
 using Nevoweb.DNN.NBrightBuy.Components.Plugins;
 using RazorEngine.Compilation.ImpromptuInterface;
+using Nevoweb.DNN.NBrightBuy.Components.Settings;
 
 namespace Nevoweb.DNN.NBrightBuy
 {
@@ -136,6 +137,10 @@ namespace Nevoweb.DNN.NBrightBuy
                 else if (paramCmd.StartsWith("cart_"))
                 {
                     strOut = CartFunctions.ProcessCommand(paramCmd, context);
+                }
+                else if (paramCmd.StartsWith("settings_"))
+                {
+                    strOut = SettingsFunctions.ProcessCommand(paramCmd, context);
                 }
                 else
                 {

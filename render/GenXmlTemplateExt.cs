@@ -278,9 +278,6 @@ namespace Nevoweb.DNN.NBrightBuy.render
                 case "xslinject":
                     CreateXslInject(container, xmlNod);
                     return true;
-                case "xchartorderrevenue":
-                    CreateXchartOrderRev(container, xmlNod);
-                    return true;
                 case "friendlyurl":
                     GetFriendlyUrl(container, xmlNod);
                     return true;
@@ -4781,45 +4778,6 @@ namespace Nevoweb.DNN.NBrightBuy.render
 
         #endregion
 
-        #region "Xcharts"
-
-        private void CreateXchartOrderRev(Control container, XmlNode xmlNod)
-        {
-                var lc = new Literal();
-                lc.DataBinding += CreateXchartOrderRevDataBind;
-                lc.Text  = "";
-                container.Controls.Add(lc);
-        }
-
-        private void CreateXchartOrderRevDataBind(object sender, EventArgs e)
-        {
-            var lc = (Literal) sender;
-            var container = (IDataItemContainer) lc.NamingContainer;
-            lc.Visible = visibleStatus.DefaultIfEmpty(true).First();
-            if (lc.Visible && container.DataItem != null)
-            {
-                var nbi1 = (NBrightInfo) container.DataItem;
-                var strOut = "";
-                var nodList = nbi1.XMLDoc.SelectNodes("root/orderstats/*");
-                if (nodList != null)
-                {
-                    foreach (XmlNode nod in nodList)
-                    {
-                        var nbi = new NBrightInfo();
-                        nbi.XMLData = nod.OuterXml;
-
-                        strOut += "{'x': '" + nbi.GetXmlPropertyInt("item/createdyear") + "-" + nbi.GetXmlPropertyInt("item/createdmonth").ToString("D2") + "',";
-                        strOut += "'y': " + nbi.GetXmlPropertyRaw("item/appliedtotal").ToString() + "},";
-
-                    }
-                    strOut = strOut.TrimEnd(',');
-                }
-
-                lc.Text = strOut;
-            }
-        }
-
-        #endregion
 
         #region "labelof"
 

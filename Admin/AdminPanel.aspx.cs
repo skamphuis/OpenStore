@@ -25,6 +25,7 @@ using Nevoweb.DNN.NBrightBuy.Admin;
 using Nevoweb.DNN.NBrightBuy.Components;
 using Nevoweb.DNN.NBrightBuy.Components.Interfaces;
 using System.Web.UI;
+using System.IO;
 
 namespace Nevoweb.DNN.NBrightBuy
 {
@@ -64,11 +65,42 @@ namespace Nevoweb.DNN.NBrightBuy
                 var pageheaderTempl = NBrightBuyUtils.RazorTemplRender("Admin_Panel_head.cshtml", 0, "", nbi, "/DesktopModules/NBright/NBrightBuy", "config", Utils.GetCurrentCulture(), StoreSettings.Current.Settings());
                 this.Header.Controls.Add(new LiteralControl(pageheaderTempl));
 
-                var strOut = NBrightBuyUtils.RazorTemplRender("Admin_Panel.cshtml", 0, "", nbi, "/DesktopModules/NBright/NBrightBuy", "config", Utils.GetCurrentCulture(), StoreSettings.Current.Settings());
+
+                // We've split the html page into 3 parts, so we can inject the controls without changing them.
+                // Admin_Panel_top.cshtml and Admin_Panel_foot.cshtml make up the whole html, with the ctrl injected as a control onto the page.
+                // I think this could be done in all razor, but would mean a rewriter of all the controls, so we use this method.
+
+
+                var strOut = NBrightBuyUtils.RazorTemplRender("Admin_Panel_top.cshtml", 0, "", nbi, "/DesktopModules/NBright/NBrightBuy", "config", Utils.GetCurrentCulture(), StoreSettings.Current.Settings());
                 var lit = new Literal();
                 lit.Text = strOut;
                 phData.Controls.Add(lit);
-                
+
+
+                var pluginData = new PluginData(PortalSettings.Current.PortalId);
+                var ctrl = Utils.RequestParam(Context, "ctrl");
+                if (StoreSettings.Current.Settings().Count == 0) ctrl = "settings";
+                if (ctrl == "")
+                {
+                    ctrl = "dashsummary";
+                }
+                var ctlpath = AdminPanelUtils.GetControlPath(ctrl);
+                if (ctlpath != "" && AdminPanelUtils.CheckSecurity(UserController.Instance.GetCurrentUserInfo(), pluginData.GetPluginByCtrl(ctrl)))
+                {
+                    // make compatible with running DNN in virtual directory
+                    if (HttpContext.Current.Request.ApplicationPath != null && !ctlpath.StartsWith(HttpContext.Current.Request.ApplicationPath)) ctlpath = HttpContext.Current.Request.ApplicationPath + ctlpath;
+                    var c2 = LoadControl(ctlpath);
+                    phData.Controls.Add(c2);
+                }
+
+                var strOut2 = NBrightBuyUtils.RazorTemplRender("Admin_Panel_foot.cshtml", 0, "", nbi, "/DesktopModules/NBright/NBrightBuy", "config", Utils.GetCurrentCulture(), StoreSettings.Current.Settings());
+                var lit2 = new Literal();
+                lit2.Text = strOut2;
+                phData.Controls.Add(lit2);
+
+
+
+
                 #endregion
 
             }

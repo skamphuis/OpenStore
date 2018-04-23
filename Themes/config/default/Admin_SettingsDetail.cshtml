@@ -1,0 +1,668 @@
+@inherits NBrightBuy.render.NBrightBuyRazorTokens<NBrightDNN.NBrightRazor>
+@using System
+@using System.Collections.Generic
+@using System.Web.Razor.Parser.SyntaxTree
+@using System.Xml
+@using DotNetNuke.Common
+@using DotNetNuke.Entities.Portals
+@using NBrightCore.common
+@using NBrightDNN
+@using NBrightDNN.render
+@using Nevoweb.DNN.NBrightBuy.Components
+
+
+@AddMetaData("resourcepath", "/DesktopModules/NBright/NBrightBuy/App_LocalResources/")
+
+@{
+    var info = (NBrightInfo)Model.List.First();
+}
+
+
+<style>
+  #countrylist { list-style-type: none; margin: 0; padding: 0; width: 60%; }
+  #countrylist li { margin: 0 5px 5px 5px; padding: 5px; font-size: 1.2em; height: 1.5em; }
+  html>body #countrylist li { height: 1.5em; line-height: 1.2em; }
+  .ui-state-highlight { height: 1.5em; line-height: 1.2em; }
+</style>
+
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('.box-content').toggle(); // Initially hide all panels - Doesn't hide Products in cat - need to fox
+        //$('.merchantdetails div.box-content').toggle(); // Then open specific ones
+        $('.pageactions div.box-content').toggle();
+
+        // move common countries
+        var countries = ["AT", "BE", "BG", "BY", "CH", "CY", "CZ", "DE", "DK", "ES", "FI", "FR", "GI", "GR", "HU", "IE", "IT", "LU", "NL", "NO", "PL", "PT", "RO", "SE", "TR", "GB", "YU", "US", "CA"];
+        for (i = 0; i < countries.length; i++) {
+            $('.eurocountries').append($('input[value="Country:' + countries[i] + '"]'));
+            var labselector = 'label[for="' + $('input[value="Country:' + countries[i] + '"]').attr('id') + '"]';
+            $('.eurocountries').append($(labselector));
+            $('.eurocountries').append('<br/>');
+        }
+
+        $('.checkAll').click(function() {
+            if ($(this).is(":checked")) {
+                $('input[value*="Country:"]:checkbox').prop('checked', true);
+            } else {
+                $('input[value*="Country:"]:checkbox').prop('checked', false);
+            }
+        });
+
+    });
+
+    $(function () {
+        $("#countrylist").sortable({ placeholder: "ui-state-highlight", update: function(event, ui) {
+            savecountrysortorder();
+        } });
+        $("#countrylist").disableSelection();
+        $("#countrylist").on("sortupdate", function (event, ui) { });
+    });
+
+    function savecountrysortorder() {
+        var l = '';
+        var listItems = $("#countrylist li");
+        listItems.each(function (idx) {
+            l += $(this).attr('value') + ';';
+        });
+        $('input[id*="_countrysortorder_"]').val(l);
+    };
+
+
+</script>
+
+<br />
+
+<div class="row merchantdetails">
+    	<div class="col-xs-12 col-sm-12">
+		<div class="box">
+			<div class="box-header">
+				<div class="box-name">
+					<i class="fa fa-search"></i><span>@ResourceKey("Settings.merchantdetails")</span>
+				</div>
+				<div class="box-icons">
+					<a class="collapse-link"><i class="fa fa-chevron-down"></i>
+					</a><a class="expand-link"><i class="fa fa-expand"></i></a>
+					<a class="close-link"><i class="fa fa-times"></i></a></div>
+				<div class="no-move">
+				</div>
+			</div>
+			<div class="box-content">
+				<div class="form-horizontal dnnForm">
+					<p class="page-header">@ResourceKey("Settings.emailaddresses")</p>
+					<div class="form-group">
+						<label class="col-sm-3 control-label">@ResourceKey("Settings.adminemail")</label>
+						<div class="col-sm-5">
+                            @TextBox(info, "genxml/textbox/adminemail", "maxlength='150' class='form-control'")
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-3 control-label">@ResourceKey("Settings.manageremail")</label>
+						<div class="col-sm-5">
+                            @TextBox(info, "genxml/textbox/manageremail", "maxlength='150' class='form-control'")
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-3 control-label">@ResourceKey("Settings.supportemail")</label>
+						<div class="col-sm-5">
+                            @TextBox(info, "genxml/textbox/supportemail", "maxlength='150' class='form-control'")
+						</div>
+					</div>
+				    <div class="form-group">
+				        <label class="col-sm-3 control-label">@ResourceKey("Settings.salesemail")</label>
+				        <div class="col-sm-5">
+                            @TextBox(info, "genxml/textbox/salesemail", "maxlength='150' class='form-control'")
+				        </div>
+				    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">@ResourceKey("Settings.websiteurl")</label>
+                        <div class="col-sm-5">
+                            @TextBox(info, "genxml/textbox/websiteurl", "maxlength='150' class='form-control'")
+                        </div>
+                    </div>
+				    <p class="page-header">@ResourceKey("Settings.merchantaddress")</p>
+					<div class="form-group">
+						<label class="col-sm-3 control-label">@ResourceKey("Settings.merchantattention")</label>
+						<div class="col-sm-5">
+                            @TextBox(info, "genxml/textbox/storeattention", "maxlength='150' class='form-control'")
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-3 control-label">@ResourceKey("General.lblCompany")</label>
+						<div class="col-sm-5">
+                            @TextBox(info, "genxml/textbox/storecompany", "maxlength='150' class='form-control'")
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-3 control-label">@ResourceKey("Settings.merchantpostbox")</label>
+						<div class="col-sm-5">
+                            @TextBox(info, "genxml/textbox/storepostbox", "maxlength='150' class='form-control'")
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-3 control-label">@ResourceKey("General.lblAddress1")</label>
+						<div class="col-sm-5">
+                            @TextBox(info, "genxml/textbox/storeaddressline1", "maxlength='150' class='form-control'")
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-3 control-label">@ResourceKey("General.lblAddress2")</label>
+						<div class="col-sm-5">
+                            @TextBox(info, "genxml/textbox/storeaddressline2", "maxlength='150' class='form-control'")
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-3 control-label">@ResourceKey("General.lblCity")</label>
+						<div class="col-sm-5">
+                            @TextBox(info, "genxml/textbox/storecity", "maxlength='150' class='form-control'")
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-3 control-label">@ResourceKey("General.lblRegion")</label>
+						<div class="col-sm-5">
+                            @TextBox(info, "genxml/textbox/storeregion", "maxlength='150' class='form-control'")
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-3 control-label">@ResourceKey("General.lblPostCode")</label>
+						<div class="col-sm-5">
+                            @TextBox(info, "genxml/textbox/storepostcode", "maxlength='150' class='form-control'")
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-3 control-label">@ResourceKey("General.lblCountry")</label>
+						<div class="col-sm-5">
+                            @CountrySelectList(info, "genxml/dropdownlist/storecountry", "class='form-control'")
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-3 control-label">@ResourceKey("General.lblPhone")</label>
+						<div class="col-sm-5">
+                            @TextBox(info, "genxml/textbox/storephone", "maxlength='150' class='form-control'")
+					</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-3 control-label">@ResourceKey("General.TaxNumber")</label>
+						<div class="col-sm-5">
+                            @TextBox(info, "genxml/textbox/storetaxnumber", "maxlength='150' class='form-control'")
+						</div>
+					</div>
+					<p class="page-header">@ResourceKey("Settings.bankingdetails")</p>
+					<div class="form-group">
+						<label class="col-sm-3 control-label">@ResourceKey("Settings.bank")</label>
+						<div class="col-sm-5">
+                            @TextBox(info, "genxml/textbox/bankname", "maxlength='150' class='form-control'")
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-3 control-label">@ResourceKey("Settings.accountname")</label>
+						<div class="col-sm-5">
+                            @TextBox(info, "genxml/textbox/bankaccountname", "maxlength='150' class='form-control'")
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-3 control-label">@ResourceKey("Settings.accountnumber")</label>
+						<div class="col-sm-5">
+                            @TextBox(info, "genxml/textbox/bankaccountnumber", "maxlength='150' class='form-control'")
+						</div>
+					</div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">@ResourceKey("Settings.bankinginstructions")</label>@LangFlag(info.Lang)
+                        <div class="col-sm-5">
+                            @TextArea(info, "genxml/lang/genxml/textbox/bankinginstructions", " rows='4' class='form-control'", ResourceKey("Notification.bankinginstructions").ToString())
+                        </div>
+                    </div>
+					<p class="page-header">@ResourceKey("Settings.emailbranding")</p>
+					<div class="form-group">
+						<label class="col-sm-3 control-label">@ResourceKey("Settings.storename")</label>
+						<div class="col-sm-5">
+                            @TextBox(info, "genxml/textbox/storename", "maxlength='150' class='form-control'")
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-3 control-label">@ResourceKey("Settings.logoimage")</label>
+					    <div class="col-sm-5">
+					        [<tag id="emaillogo" type="fileupload" cssclass="form-control" textwidth="0" maxlength="50" separator=" " />] 
+                			[<tag id="cmdUpload" type="linkbutton" cssclass="btn btn-default" resourcekey="General.cmdUploadFileButton" commandname="save" />] 
+                            [<tag type="if" xpath="genxml/hidden/hidemaillogo" textvalue="" display="{OFF}" />] 
+                    			[<tag id="cmdRemovelogo" type="linkbutton" cssclass="btn btn-danger" resourcekey="General.cmdRemoveButton" commandname="removelogo" />]
+							     <div style="clear:both;margin:20px 0;">[<tag type='imageof' xpath='genxml/hidden/emaillogourl' />]</div>
+					        [<tag type="endif" />]
+					    </div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-3 control-label">@ResourceKey("Settings.emailmessage")</label>@LangFlag(info.Lang)
+						<div class="col-sm-5">
+                            @TextArea(info, "genxml/lang/genxml/textbox/emailmessage", " rows='4' class='form-control'", ResourceKey("Notification.emailmessage").ToString())
+						</div>
+					</div>
+					<p class="page-header">@ResourceKey("Settings.socialnetworking")</p>
+					<div class="form-group">
+						<label class="col-sm-3 control-label">@ResourceKey("Settings.twitterpage")</label>
+						<div class="col-sm-5">
+                            @TextBox(info, "genxml/textbox/twitterpage", "maxlength='150' class='form-control'")
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-3 control-label">@ResourceKey("Settings.facebookpage")</label>
+						<div class="col-sm-5">
+                            @TextBox(info, "genxml/textbox/facebookpage", "maxlength='150' class='form-control'")
+						</div>
+					</div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">@ResourceKey("Settings.addthispubid")</label>
+                        <div class="col-sm-5">
+                            @TextBox(info, "genxml/textbox/addthispubid", "maxlength='150' class='form-control'")
+                        </div>
+                    </div>
+					<div class="form-group">
+						<label class="col-sm-3 control-label">@ResourceKey("Settings.sharingwidget")</label>
+						<div class="col-sm-5">
+                            @TextArea(info, "genxml/textbox/sharingwidget", " rows='4' class='form-control'")
+						</div>
+					</div>
+					<p class="page-header">@ResourceKey("Settings.cartmessages")</p>
+					<div class="form-group">
+						<label class="col-sm-3 control-label">@ResourceKey("Settings.storepickupmessage")</label>@LangFlag(info.Lang)
+						<div class="col-sm-5">
+                            @TextArea(info, "genxml/lang/genxml/textbox/pickupmessage", " rows='4' class='form-control'", ResourceKey("Notification.pickupmessage").ToString())
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-xs-12 col-sm-12">
+	    <div class="box">
+	        <div class="box-header">
+	            <div class="box-name">
+	                <i class="fa fa-search"></i><span>@ResourceKey("Settings.folders")</span>
+	            </div>
+	            <div class="box-icons">
+	                <a class="collapse-link"><i class="fa fa-chevron-down"></i>
+	                </a><a class="expand-link"><i class="fa fa-expand"></i></a>
+	                <a class="close-link"><i class="fa fa-times"></i></a></div>
+	            <div class="no-move">
+	            </div>
+	        </div>
+	        <div class="box-content">
+	            <div class="form-horizontal dnnForm">
+	                <div class="form-group">
+	                    <label class="col-sm-3 control-label">@ResourceKey("Settings.folderimages")</label>
+	                    <div class="col-sm-5">
+                            @TextBox(info, "genxml/textbox/folderimages", "maxlength='150' class='form-control'", "NBStore\\images")
+                        </div>
+	                </div>
+	                <div class="form-group">
+	                    <label class="col-sm-3 control-label">@ResourceKey("Settings.folderdocs")</label>
+	                    <div class="col-sm-5">
+                            @TextBox(info, "genxml/textbox/folderdocs", "maxlength='150' class='form-control'", "NBStore\\docs")
+                        </div>
+	                </div>
+	                <div class="form-group">
+	                    <label class="col-sm-3 control-label">@ResourceKey("Settings.folderuploads")</label>
+	                    <div class="col-sm-5">
+                            @TextBox(info, "genxml/textbox/folderuploads", "maxlength='150' class='form-control'", "NBStore\\uploads")
+                        </div>
+	                </div>
+	                <div class="form-group">
+	                    <label class="col-sm-3 control-label">@ResourceKey("Settings.folderclientuploads")</label>
+	                    <div class="col-sm-5">
+                            @TextBox(info, "genxml/textbox/folderclientuploads", "maxlength='150' class='form-control'", "NBStore\\clientuploads")
+	                    </div>
+	                </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">@ResourceKey("Settings.allowupload")</label>
+                        <div class="col-sm-5">
+                            <div class="dnnFormItem">
+                                @CheckBox(info, "genxml/checkbox/allowupload","")
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">@ResourceKey("Settings.fileregexpr")</label>
+                        <div class="col-sm-5">
+                            @TextBox(info, "genxml/textbox/fileregexpr", "maxlength='150' class='form-control'", "^.*\\.(txt|gif|jpe?g|jpg|pdf|doc|docx|xls|xlsx|zip|csv|xml)")
+                        </div>
+                    </div>
+
+	            </div>
+	        </div>
+	    </div>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-xs-12 col-sm-12">
+		<div class="box">
+			<div class="box-header">
+				<div class="box-name">
+					<i class="fa fa-search"></i><span>@ResourceKey("Settings.storeconfiguration")</span>
+				</div>
+				<div class="box-icons">
+					<a class="collapse-link"><i class="fa fa-chevron-down"></i>
+					</a><a class="expand-link"><i class="fa fa-expand"></i></a>
+					<a class="close-link"><i class="fa fa-times"></i></a></div>
+				<div class="no-move">
+				</div>
+			</div>
+			<div class="box-content">
+				<div class="form-horizontal dnnForm">
+					<div class="form-group">
+						<label class="col-sm-3 control-label">@ResourceKey("Settings.productlisttab")</label>
+						<div class="col-sm-5">
+                            @TabSelectListOnTabId(info, "genxml/dropdownlist/productlisttab", "class='form-control'", true)
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-3 control-label">@ResourceKey("Settings.productdetailtab")</label>
+						<div class="col-sm-5">
+                            @TabSelectListOnTabId(info, "genxml/dropdownlist/ddldetailtabid", "class='form-control'", true)
+						</div>
+					</div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">@ResourceKey("Settings.productsearchtab")</label>
+                        <div class="col-sm-5">
+                            @TabSelectListOnTabId(info, "genxml/dropdownlist/productsearchtab", "class='form-control'", true)
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">@ResourceKey("Settings.productsearchmod")</label>
+                        <div class="col-sm-5">
+                            @TextBox(info, "genxml/textbox/productsearchmod", "maxlength='150' class='form-control'", "")
+                        </div>
+                    </div>
+					<div class="form-group">
+						<label class="col-sm-3 control-label">@ResourceKey("Settings.carttab")</label>
+						<div class="col-sm-5">
+                            @TabSelectListOnTabId(info, "genxml/dropdownlist/carttab", "class='form-control'", true)
+						</div>
+					</div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">@ResourceKey("Settings.checkout")</label>
+                        <div class="col-sm-5">
+                            @TabSelectListOnTabId(info, "genxml/dropdownlist/checkouttab", "class='form-control'", true)
+                        </div>
+                    </div>
+					<div class="form-group">
+						<label class="col-sm-3 control-label">@ResourceKey("Settings.paymenttab")</label>
+						<div class="col-sm-5">
+                            @TabSelectListOnTabId(info, "genxml/dropdownlist/paymenttab", "class='form-control'", true)
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-3 control-label">@ResourceKey("Settings.backofficeexittab")</label>
+						<div class="col-sm-5">
+                            @TabSelectListOnTabId(info, "genxml/dropdownlist/exittab", "class='form-control'", true)
+						</div>
+					</div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">@ResourceKey("Settings.favoritestab")</label>
+                        <div class="col-sm-5">
+                            @TabSelectListOnTabId(info, "genxml/dropdownlist/favoritestab", "class='form-control'", true)
+                        </div>
+                        <div class="col-sm-2" style="padding:0px">
+                            <div class="dnnFormItem">
+                                @CheckBox(info, "genxml/checkbox/enablefavorites", "") @ResourceKey("Settings.Enabled")
+                            </div>
+                        </div>
+                    </div>
+					<div class="form-group">
+						<label class="col-sm-3 control-label">@ResourceKey("Settings.ordermanagertab")</label>
+						<div class="col-sm-5">
+                            @TabSelectListOnTabId(info, "genxml/dropdownlist/ordermanagertab", "class='form-control'", true)
+						</div>
+						<div class="col-sm-2" style="padding:0px">
+				            <div class="dnnFormItem">
+								@CheckBox(info, "genxml/checkbox/enablemyorders", "") @ResourceKey("Settings.Enabled")
+							</div>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-3 control-label">@ResourceKey("Settings.profiletab")</label>
+						<div class="col-sm-5">
+                            @TabSelectListOnTabId(info, "genxml/dropdownlist/profiletab", "class='form-control'", true)
+						</div>
+						<div class="col-sm-2" style="padding:0px">
+				            <div class="dnnFormItem">
+								@CheckBox(info, "genxml/checkbox/enablemyprofile", "") @ResourceKey("Settings.Enabled")
+							</div>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-3 control-label">@ResourceKey("Settings.addressestab")</label>
+						<div class="col-sm-5">
+                            @TabSelectListOnTabId(info, "genxml/dropdownlist/addressestab", "class='form-control'", true)
+						</div>
+						<div class="col-sm-2" style="padding:0px">
+				            <div class="dnnFormItem">
+								@CheckBox(info, "genxml/checkbox/enablemyaddress", "") @ResourceKey("Settings.Enabled")
+							</div>
+						</div>
+					</div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">@ResourceKey("Settings.logintab")</label>
+                        <div class="col-sm-5">
+                            @TabSelectListOnTabId(info, "genxml/dropdownlist/logintab", "class='form-control'", true)
+                        </div>
+                    </div>
+				    <div class="form-group">
+				        <label class="col-sm-3 control-label">@ResourceKey("Settings.minimumstocklevel")</label>
+				        <div class="col-sm-2">
+                            @TextBox(info, "genxml/textbox/minimumstocklevel", "maxlength='150' class='form-control'", "0")
+				        </div>
+				    </div>
+    			    <div class="form-group">                
+                    <label class="col-sm-3 control-label">@ResourceKey("Settings.defaultthemefolder")</label>
+                    	<div class="col-sm-5">
+                            @TextBox(info, "genxml/textbox/themefolder", "maxlength='150' class='form-control'", "Default")
+                    	</div>
+				    </div>
+				<div class="form-group">
+				    <label class="col-sm-3 control-label">@ResourceKey("Settings.emailthemefolder")</label>
+				    <div class="col-sm-5">
+                        @TextBox(info, "genxml/textbox/emailthemefolder", "maxlength='150' class='form-control'", "Default")
+				    </div>
+				</div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">CKEditor CDN</label>
+                        <div class="col-sm-5">
+                            @TextBox(info, "genxml/textbox/ckeditorcdn", "maxlength='150' class='form-control'", "//cdn.ckeditor.com/4.7.3/standard/ckeditor.js")
+                        </div>
+                    </div>
+					<div class="form-group">
+						<label class="col-sm-3 control-label">@ResourceKey("General.DebugMode")</label>
+						<div class="col-sm-5">
+							<div class="dnnFormItem">
+                                @CheckBox(info, "genxml/checkbox/debug.mode", ResourceKey("Settings.debugmode").ToString())
+							</div>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-3 control-label">@ResourceKey("Settings.debugfileout")</label>
+						<div class="col-sm-5">
+							<div class="dnnFormItem">
+                                @CheckBox(info, "genxml/checkbox/debugfileout", ResourceKey("Settings.debugfileoutmsg").ToString())
+							</div>
+						</div>
+					</div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">@ResourceKey("Settings.enablefilelogging")</label>
+                        <div class="col-sm-5">
+                            <div class="dnnFormItem">
+                                @CheckBox(info, "genxml/checkbox/enablefilelogging", ResourceKey("Settings.enablefileloggingmsg").ToString())
+                            </div>
+                        </div>
+                    </div>
+    			    <div class="form-group">                
+                    	<label class="col-sm-3 control-label">@ResourceKey("General.AdminPin")</label><!-- Need to move this -->
+                    	<div class="col-sm-2">
+                            @TextBox(info, "genxml/textbox/adminpin", "maxlength='10' class='form-control'", "1234")
+                    	</div>
+				    </div>
+				    <div class="form-group">
+				        <label class="col-sm-3 control-label">@ResourceKey("Settings.enabledealer")</label>
+				        <div class="col-sm-5">
+				            <div class="dnnFormItem">
+                                @CheckBox(info, "genxml/checkbox/enabledealer", "")
+				            </div>
+				        </div>
+				    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">@ResourceKey("Settings.dealerrole")</label>
+                        <div class="col-sm-2">
+                            @TextBox(info, "genxml/textbox/dealerrole", "maxlength='50' class='form-control'", "Dealer")
+                        </div>
+                    </div>
+    			    <div class="form-group">                
+                    	<label class="col-sm-3 control-label">@ResourceKey("Settings.orderprefix")</label>
+                    	<div class="col-sm-2">
+                            @TextBox(info, "genxml/textbox/orderprefix", "maxlength='10' class='form-control'", "")
+                    	</div>
+				    </div>                    
+					<div class="form-group">
+						<label class="col-sm-3 control-label">@ResourceKey("Settings.copyorderto")</label>
+						<div class="col-sm-5">
+							<div class="dnnFormItem">
+                                @CheckBox(info, "genxml/checkbox/copyorderto", "","", true)
+							</div>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-3 control-label">@ResourceKey("Settings.subscribenewsletter")</label>
+						<div class="col-sm-5">
+							<div class="dnnFormItem">
+                                @CheckBox(info, "genxml/checkbox/subscribenewsletter", "","",true)
+							</div>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-3 control-label">@ResourceKey("Settings.checkoutpromocode")</label>
+						<div class="col-sm-5">
+							<div class="dnnFormItem">
+                                @CheckBox(info, "genxml/checkbox/checkoutpromocode", "","",true)
+							</div>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-3 control-label">@ResourceKey("Settings.checkouttaxcode")</label>
+						<div class="col-sm-5">
+							<div class="dnnFormItem">
+                                @CheckBox(info, "genxml/checkbox/checkouttaxcode", "","",true)
+							</div>
+						</div>
+					</div>
+    			    <div class="form-group">                
+                    	<label class="col-sm-3 control-label">@ResourceKey("Settings.productimageresize")</label>
+                    	<div class="col-sm-2">
+                            @TextBox(info, "genxml/textbox/productimageresize", "maxlength='4' class='form-control'", "960")
+                    	</div>
+				    </div>
+				    <div class="form-group">
+				        <label class="col-sm-3 control-label">@ResourceKey("Settings.groupresults")</label>
+				        <div class="col-sm-5">
+				            <div class="dnnFormItem">
+                                @CheckBox(info, "genxml/checkbox/chkgroupresults", "")
+				            </div>
+				        </div>
+				    </div>
+				    <div class="form-group">
+				        <label class="col-sm-3 control-label">@ResourceKey("Settings.shareproducts")</label>
+				        <div class="col-sm-5">
+				            <div class="dnnFormItem">
+                                @CheckBox(info, "genxml/checkbox/shareproducts", "")
+                                @ResourceKey("Settings.shareproductsmsg")
+				            </div>
+				        </div>
+				    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">@ResourceKey("Settings.sharecategories")</label>
+                        <div class="col-sm-5">
+                            <div class="dnnFormItem">
+                                @CheckBox(info, "genxml/checkbox/sharecategories", "")
+                                @ResourceKey("Settings.sharecategoriesmsg")
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">@ResourceKey("Settings.shareorders")</label>
+                        <div class="col-sm-5">
+                            <div class="dnnFormItem">
+                                @CheckBox(info, "genxml/checkbox/shareorders", "")
+                                @ResourceKey("Settings.shareordersmsg")
+                            </div>
+                        </div>
+                    </div>
+				    <div class="form-group">
+				        <label class="col-sm-3 control-label">@ResourceKey("Settings.alloweditorder")</label>
+				        <div class="col-sm-5">
+				            <div class="dnnFormItem">
+                                @CheckBox(info, "genxml/checkbox/alloweditorder", "")
+				            </div>
+				        </div>
+				    </div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-xs-12 col-sm-12">
+		<div class="box culturesettings no-drop">
+		    <div class="box-header">
+		        <div class="box-name">
+		            <i class="fa fa-search"></i><span>@ResourceKey("Settings.countrydetails")</span>
+		        </div>
+		        <div class="box-icons">
+		            <a class="collapse-link"><i class="fa fa-chevron-down"></i>
+		            </a><a class="expand-link"><i class="fa fa-expand"></i></a>
+		            <a class="close-link"><i class="fa fa-times"></i></a></div>
+		        <div class="no-move">
+		        </div>
+		    </div>
+		
+		    <div class="box-content">
+		        <div class="form-horizontal dnnForm">
+		            <div class="form-group">
+		                <label class="col-sm-3 control-label">@ResourceKey("Settings.merchantculture")</label>
+		                <div class="col-sm-5">
+                           @CultureCodeDropDown(info, "genxml/dropdownlist/merchantculturecode", "class='s2_with_tag populate placeholder'")
+	                </div>
+		            </div>
+		            <div class="form-group">
+		                <label class="col-sm-3 control-label">@ResourceKey("Settings.currencycode")</label>
+		                <div class="col-sm-5">[<tag id="currencyculturecode" cssclass="s2_with_tag populate placeholder" type="culturecodedropdown"/>]
+                            @CultureCodeDropDown(info, "genxml/dropdownlist/currencyculturecode", "class='s2_with_tag populate placeholder'")
+		                </div>
+		            </div>
+		            <div class="form-group">
+		                <label class="col-sm-3 control-label">@ResourceKey("Settings.currencysymbol")</label>
+		                <div class="col-sm-2">
+                            @TextBox(info, "genxml/textbox/currencysymbol", "maxlength='4' class='form-control'", "€")
+		                </div>
+		            </div>
+		        </div>
+		        <div class="form-horizontal dnnForm countrylist">
+		            <div class="form-group">
+		                <div class="col-sm-3 eurocountries">
+		                    <p class="page-header">@ResourceKey("Settings.commoncountries")</p>
+		                </div>
+		                <div class="col-sm-6">
+		                    <p class="page-header">@ResourceKey("Settings.selectedcountries")</p>[<tag type="countrylist" id="countrylist"/>]
+		                </div>
+		            </div>
+
+		        </div>
+		        <div class="form-horizontal dnnForm countryselection">
+		            <p class="page-header">@ResourceKey("Settings.othercountries") &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" class="checkAll" /> @ResourceKey("Settings.checkall")</p>
+		            [<tag id="countrycodelist" type="dnn:countrycheckboxlist" RepeatColumns="4"/>]
+		        </div>
+		    </div>
+		</div>
+	</div>
+</div>
+

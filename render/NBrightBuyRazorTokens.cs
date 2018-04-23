@@ -1453,25 +1453,78 @@ namespace NBrightBuy.render
 
         public IEncodedString AdminMenu()
         {
-            var strOut = "";
-            var c1 = LoadControl("/DesktopModules/NBright/NBrightBuy/Admin/Menu.ascx");
-            strOut = c1.ToString();
+            var strOut = AdminPanelUtils.GetMenu(UserController.Instance.GetCurrentUserInfo());
             return new RawString(strOut);
-        }
-        public IEncodedString AdminContainer()
-        {
-            var strOut = "";
-            var c1 = LoadControl("/DesktopModules/NBright/NBrightBuy/Admin/Container.ascx");
-            strOut = c1.ToString();
-            return new RawString(strOut);
-        }
-
-        private object LoadControl(string v)
-        {
-            throw new NotImplementedException();
         }
 
         #endregion
+
+
+        #region "Xcharts"
+
+        public IEncodedString CreateXchartOrderRevDataBind(NBrightInfo info)
+        {
+            var strOut = "";
+            var nodList = info.XMLDoc.SelectNodes("root/orderstats/*");
+            if (nodList != null)
+            {
+                foreach (XmlNode nod in nodList)
+                {
+                    var nbi = new NBrightInfo();
+                    nbi.XMLData = nod.OuterXml;
+
+                    strOut += "{'x': '" + nbi.GetXmlPropertyInt("item/createdyear") + "-" + nbi.GetXmlPropertyInt("item/createdmonth").ToString("D2") + "',";
+                    strOut += "'y': " + nbi.GetXmlPropertyRaw("item/appliedtotal").ToString() + "},";
+
+                }
+                strOut = strOut.TrimEnd(',');
+            }
+            return new RawString(strOut);
+        }
+
+
+        public IEncodedString CultureCodeDropDown(NBrightInfo info, string xpath, String attributes = "", bool allowblank = true)
+        {
+            try
+            {
+                var strOut = "";
+                var id = getIdFromXpath(xpath);
+                strOut = "<select id='" + id + "' " + attributes + " >";
+
+                var cultures = CultureInfo.GetCultures(CultureTypes.AllCultures);
+                var dnnCultureCode = DnnUtils.GetCountryCodeList();
+
+                var joinItems = (from d1 in cultures where dnnCultureCode.ContainsKey(d1.Name.Split('-').Last()) select d1).ToList<CultureInfo>();
+
+                var ddl = new List<ListItem>();
+
+                if (allowblank)
+                {
+                    strOut += "    <option value='' ></option>";
+                }
+
+                foreach (var obj in joinItems)
+                {
+                    var s = "";
+                    if (obj.Name == info.GetXmlProperty(xpath)) s = "selected";
+
+                    strOut += "    <option value='" + obj.Name + "' " + s + " >" + obj.DisplayName + " : " + obj.Name + "</option>";
+                }
+
+                strOut += "</select>";
+                return new RawString(strOut);
+            }
+            catch (Exception e)
+            {
+                return new RawString(e.ToString());
+            }
+        }
+
+
+        #endregion
+
+
+
 
     }
 
