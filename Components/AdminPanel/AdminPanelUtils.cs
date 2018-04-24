@@ -21,7 +21,13 @@ namespace Nevoweb.DNN.NBrightBuy.Components
             var strOut = "";
             try
             {
+
                 _resxpath = StoreSettings.NBrightBuyPath() + "/App_LocalResources/Plugins.ascx.resx";
+
+                if (userInfo.UserID <= 0)
+                {
+                    return DnnUtils.GetLocalizedString("notloggedin", _resxpath, Utils.GetCurrentCulture());
+                }
 
                 var strCacheKey = "bomenuhtml*" + Utils.GetCurrentCulture() + "*" + PortalSettings.Current.PortalId.ToString("") + "*" + userInfo.UserID.ToString("");
 

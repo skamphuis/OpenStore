@@ -321,4 +321,7 @@
   <data name="multibuypromo.Text" xml:space="preserve">
     <value>Mulit-Buy</value>
   </data>
+  <data name="notloggedin.Text" xml:space="preserve">
+    <value>Security Failure.  You are not logged in.</value>
+  </data>
 </root>

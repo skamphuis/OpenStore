@@ -742,23 +742,28 @@ namespace Nevoweb.DNN.NBrightBuy.Components
                 //get uploaded params
                 var ajaxInfo = NBrightBuyUtils.GetAjaxFields(context);
                 var lang = NBrightBuyUtils.SetContextLangauge(ajaxInfo); // Ajax breaks context with DNN, so reset the context language to match the client.
-
-                var itemid = ajaxInfo.GetXmlProperty("genxml/hidden/itemid");
-                if (Utils.IsNumeric(itemid))
+                var editlang = ajaxInfo.GetXmlProperty("genxml/hidden/editlang");
+                if (editlang == "") editlang = lang;
+                var itemid = ajaxInfo.GetXmlPropertyInt("genxml/hidden/itemid");
+                if (itemid > 0)
                 {
-                    var nbi = objCtrl.Get(Convert.ToInt32(itemid));
+                    var nbi = objCtrl.GetData(itemid);
                     if (nbi != null)
                     {
                         // get data passed back by ajax
                         var strIn = HttpUtility.UrlDecode(Utils.RequestParam(context, "inputxml"));
                         // update record with ajax data
+                        nbi.Lang = ""; // empty Lang so we update the non-localized fields.
                         nbi.UpdateAjax(strIn);
                         objCtrl.Update(nbi);
 
                         // do langauge record
-                        var nbi2 = objCtrl.GetDataLang(Convert.ToInt32(itemid), lang);
+                        var nbi2 = objCtrl.GetDataLang(itemid, editlang);
+                        nbi2.Lang = editlang; // update the localized fields.
                         nbi2.UpdateAjax(strIn);
                         objCtrl.Update(nbi2);
+
+
                     }
                     DataCache.ClearCache(); // clear ALL cache.
                 }

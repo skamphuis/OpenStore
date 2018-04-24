@@ -1520,6 +1520,39 @@ namespace NBrightBuy.render
             }
         }
 
+        public IEncodedString CountryCheckBoxList(NBrightInfo info, String xpath, String attributes = "", Boolean defaultValue = false)
+        {
+            var strOut = "";
+            var dnnCultureCode = DnnUtils.GetCountryCodeList();
+
+            var upd = getUpdateAttr(xpath, attributes);
+                var id = getIdFromXpath(xpath);
+                strOut = "<div id='" + id + "' " + upd + " " + attributes + ">";
+                var c = 0;
+                foreach (var culturecode in dnnCultureCode)
+                {
+                    strOut += "    <input id='" + id + "_" + c.ToString("") + "' name='" + id + "$" + c.ToString("") + "' type='checkbox' value='Country:" + culturecode.Key + "' " + getChecked(info, xpath + "/chk[@data='Country:" + culturecode.Key + "']/@value", defaultValue) + " /><label for='" + id + "_" + c.ToString("") + "'>" + culturecode.Value + "</label>";
+                    c += 1;
+                }
+                strOut += "</div>";
+            return new RawString(strOut);
+        }
+
+        public IEncodedString CountrySortList(string id)
+        {
+            var strOut = "";
+
+            strOut = "<ul id='" + id + "'>";
+            var tList = NBrightBuyUtils.GetCountryList();
+            foreach (var tItem in tList)
+            {
+                strOut += "<li value='" + tItem.Key + "'>" + tItem.Value + "</li>";
+            }
+            strOut += "</ul>";
+
+            return new RawString(strOut);
+        }
+
 
         #endregion
 

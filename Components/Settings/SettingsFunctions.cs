@@ -13,6 +13,8 @@ using NBrightCore.render;
 using NBrightDNN;
 using System.Xml;
 using DotNetNuke.Common.Utilities;
+using NBrightCore.images;
+using Nevoweb.DNN.NBrightBuy.Components.Products;
 
 namespace Nevoweb.DNN.NBrightBuy.Components.Settings
 {
@@ -42,16 +44,17 @@ namespace Nevoweb.DNN.NBrightBuy.Components.Settings
                     case "settings_admin_save":
                         Update(context);
                         ShareProducts();
+                        strOut = SettingsAdminDetail(context);
+                        break;
+                    case "settings_updatelogo":
+                        if (!NBrightBuyUtils.CheckManagerRights()) break;
+                        UpdateLogo(context);
+                        strOut = SettingsAdminDetail(context);
                         break;
                     case "settings_removelogo":
-                        var settings = ModCtrl.GetByGuidKey(PortalSettings.Current.PortalId, 0, "SETTINGS", "NBrightBuySettings");
-                        if (settings != null && settings.GetXmlProperty("genxml/hidden/hidemaillogo") != "")
-                        {
-                            settings.SetXmlProperty("genxml/hidden/hidemaillogo", "");
-                            settings.SetXmlProperty("genxml/hidden/emaillogourl", "");
-                            settings.SetXmlProperty("genxml/hidden/emaillogopath", "");
-                            ModCtrl.Update(settings);
-                        }
+                        if (!NBrightBuyUtils.CheckManagerRights()) break;
+                        RemoveLogo(context);
+                        strOut = SettingsAdminDetail(context);
                         break;
                 }
             }
@@ -157,22 +160,16 @@ namespace Nevoweb.DNN.NBrightBuy.Components.Settings
 
             ModCtrl.SavePluginSinglePageData(context);
 
-            var settings = ModCtrl.GetPluginSinglePageData("NBrightBuySettings", "SETTINGS",Utils.GetCurrentCulture());
-
-            var sharedflag = settings.GetXmlProperty("genxml/checkbox/sharedproductsflag"); //maintain shared flag
-
-            if (settings.GetXmlProperty("genxml/hidden/hidemaillogo") != "")
+            var ajaxInfo = NBrightBuyUtils.GetAjaxFields(context);
+            var itemid = ajaxInfo.GetXmlPropertyInt("genxml/hidden/itemid");
+            var settings = ModCtrl.GetData(itemid);
+            if (settings != null)
             {
-                settings.SetXmlProperty("genxml/hidden/emaillogourl", StoreSettings.Current.FolderImages + "/" + settings.GetXmlProperty("genxml/hidden/hidemaillogo"));
-                settings.SetXmlProperty("genxml/hidden/emaillogopath", StoreSettings.Current.FolderImagesMapPath + "\\" + settings.GetXmlProperty("genxml/hidden/hidemaillogo"));
+                var sharedflag = settings.GetXmlProperty("genxml/checkbox/sharedproductsflag"); //maintain shared flag
+                settings.SetXmlProperty("genxml/hidden/backofficetabid", PortalSettings.Current.ActiveTab.TabID.ToString(""));
+                settings.SetXmlProperty("genxml/checkbox/sharedproductsflag", sharedflag); //maintain shared flag
+                ModCtrl.Update(settings);
             }
-
-            settings.SetXmlProperty("genxml/hidden/backofficetabid", PortalSettings.Current.ActiveTab.TabID.ToString(""));
-
-            settings.SetXmlProperty("genxml/checkbox/sharedproductsflag", sharedflag); //maintain shared flag
-
-            ModCtrl.Update(settings);
-
             if (StoreSettings.Current.DebugModeFileOut) settings.XMLDoc.Save(PortalSettings.Current.HomeDirectoryMapPath + "\\debug_Settings.xml");
 
             // create upload folders
@@ -265,6 +262,65 @@ namespace Nevoweb.DNN.NBrightBuy.Components.Settings
 
         #endregion
 
+        #region "fileupload"
+
+        public static void UpdateLogo(HttpContext context)
+        {
+            //get uploaded params
+            var ModCtrl = new NBrightBuyController();
+            var ajaxInfo = NBrightBuyUtils.GetAjaxInfo(context);
+            var settingsInfo = ModCtrl.GetPluginSinglePageData("NBrightBuySettings", "SETTINGS", Utils.GetCurrentCulture());
+            var imguploadlist = ajaxInfo.GetXmlProperty("genxml/hidden/imguploadlist");
+            var strOut = "";
+
+                var imgs = imguploadlist.Split(',');
+                foreach (var img in imgs)
+                {
+                    if (ImgUtils.IsImageFile(Path.GetExtension(img)) && img != "")
+                    {
+                        string fullName = StoreSettings.Current.FolderTempMapPath + "\\" + img;
+                        if (File.Exists(fullName))
+                        {
+                            var imgResize = StoreSettings.Current.GetInt(StoreSettingKeys.productimageresize);
+                            if (imgResize == 0) imgResize = 960;
+                            var imagepath = ProductFunctions.ResizeImage(fullName, imgResize);
+                            var imageurl = StoreSettings.Current.FolderImages.TrimEnd('/') + "/" + Path.GetFileName(imagepath);
+                            AddNewImage(settingsInfo.ItemID, imageurl, imagepath);
+                        }
+                    }
+                }
+        }
+
+        private static void AddNewImage(int setttingitemid, String imageurl, String imagepath)
+        {
+            var ModCtrl = new NBrightBuyController();
+            var nbi = ModCtrl.Get(setttingitemid);
+            if (nbi != null)
+            {
+                nbi.SetXmlProperty("genxml/hidden/hidemaillogo", Path.GetFileName(imagepath));
+                nbi.SetXmlProperty("genxml/hidden/emaillogourl", imageurl);
+                nbi.SetXmlProperty("genxml/hidden/emaillogopath", imagepath);
+                ModCtrl.Update(nbi);
+            }
+        }
+
+        public static void RemoveLogo(HttpContext context)
+        {
+            //get uploaded params
+            var ajaxInfo = NBrightBuyUtils.GetAjaxFields(context);
+            var setttingitemid = ajaxInfo.GetXmlPropertyInt("genxml/hidden/itemid");
+            var ModCtrl = new NBrightBuyController();
+            var nbi = ModCtrl.Get(setttingitemid);
+            if (nbi != null)
+            {
+                nbi.SetXmlProperty("genxml/hidden/hidemaillogo", "");
+                nbi.SetXmlProperty("genxml/hidden/emaillogourl", "");
+                nbi.SetXmlProperty("genxml/hidden/emaillogopath", "");
+                ModCtrl.Update(nbi);
+            }
+        }
+
+        #endregion
 
     }
 }
