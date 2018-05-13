@@ -47,7 +47,6 @@ namespace Nevoweb.DNN.NBrightBuy
     public class XmlConnector : IHttpHandler
     {
         private readonly JavaScriptSerializer _js = new JavaScriptSerializer();
-        private String _uilang = "";
         private String _editlang = "";
 
         public void ProcessRequest(HttpContext context)
@@ -80,9 +79,9 @@ namespace Nevoweb.DNN.NBrightBuy
             #region "setup language"
 
             // because we are using a webservice the system current thread culture might not be set correctly,
-            _uilang = NBrightBuyUtils.SetContextLangauge(context);
+            NBrightBuyUtils.SetContextLangauge(context);
             var ajaxInfo = NBrightBuyUtils.GetAjaxFields(context);
-            _editlang = NBrightBuyUtils.GetEditLang(ajaxInfo, _uilang);
+            _editlang = NBrightBuyUtils.GetEditLang(ajaxInfo, Utils.GetCurrentCulture());
 
             #endregion
 
@@ -504,8 +503,8 @@ namespace Nevoweb.DNN.NBrightBuy
                 // run SQL and template to return html
                 if (settings.ContainsKey("sqltpl") && settings.ContainsKey("xsltpl"))
                 {
-                    var strSql = templCtrl.GetTemplateData(settings["sqltpl"], _uilang, true, true, true, StoreSettings.Current.Settings());
-                    var xslTemp = templCtrl.GetTemplateData(settings["xsltpl"], _uilang, true, true, true, StoreSettings.Current.Settings());
+                    var strSql = templCtrl.GetTemplateData(settings["sqltpl"], Utils.GetCurrentCulture(), true, true, true, StoreSettings.Current.Settings());
+                    var xslTemp = templCtrl.GetTemplateData(settings["xsltpl"], Utils.GetCurrentCulture(), true, true, true, StoreSettings.Current.Settings());
 
                     // replace any settings tokens (This is used to place the form data into the SQL)
                     strSql = Utils.ReplaceSettingTokens(strSql, settings);
@@ -648,7 +647,7 @@ namespace Nevoweb.DNN.NBrightBuy
                 // do edit field data if a itemid has been selected
                 var obj = NBrightBuyUtils.GetSettings(PortalSettings.Current.PortalId, Convert.ToInt32(moduleid));
                 obj.ModuleId = Convert.ToInt32(moduleid); // assign for new records
-                strOut = NBrightBuyUtils.RazorTemplRender(razortemplate, obj.ModuleId, "settings", obj, controlpath, themefolder, _uilang, null);
+                strOut = NBrightBuyUtils.RazorTemplRender(razortemplate, obj.ModuleId, "settings", obj, controlpath, themefolder, Utils.GetCurrentCulture(), null);
 
                 return strOut;
 

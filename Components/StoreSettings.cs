@@ -123,17 +123,14 @@ namespace Nevoweb.DNN.NBrightBuy.Components
 
         public Dictionary<string, string> Settings()
         {
-            // redo the edit langauge for backoffice.
-            if (_settingDic != null)
-            {
-                if (_settingDic.ContainsKey("editlanguage"))
-                    _settingDic["editlanguage"] = EditLanguage;
-                else
-                    _settingDic.Add("editlanguage", EditLanguage);
-            }
             return _settingDic;
         }
 
+        /// <summary>
+        /// Uses session var to keep track of editlang.
+        /// This can be empty, so avoid using.
+        /// </summary>
+        [Obsolete("EditLanguage is deprecated, can be empty. Only use for langauge change.")]
         public String EditLanguage
         {
             get
@@ -141,14 +138,6 @@ namespace Nevoweb.DNN.NBrightBuy.Components
                 var editlang = "";
                 // need to test if HttpContext.Current is null, because webservice calling storesettings will raise exception. 
                 if (HttpContext.Current != null && HttpContext.Current.Session != null && HttpContext.Current.Session["NBrightBuy_EditLanguage"] != null) editlang = (String)HttpContext.Current.Session["NBrightBuy_EditLanguage"];
-                if (editlang == "")
-                {
-                    // no session, when call from webservice, so take setting dictionary if there.
-                    if (_settingDic.ContainsKey("editlanguage"))
-                    {
-                        return _settingDic["editlanguage"];
-                    }
-                }
                 if (editlang == "") return Utils.GetCurrentCulture();
                 return editlang;
             }
@@ -159,8 +148,6 @@ namespace Nevoweb.DNN.NBrightBuy.Components
                 {
                     HttpContext.Current.Session["NBrightBuy_EditLanguage"] = value;
                 }
-
-
             }
         }
 

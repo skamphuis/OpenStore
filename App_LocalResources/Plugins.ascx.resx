@@ -319,7 +319,7 @@
     <value>Group</value>
   </data>
   <data name="multibuypromo.Text" xml:space="preserve">
-    <value>Mulit-Buy</value>
+    <value>Multi-Buy</value>
   </data>
   <data name="notloggedin.Text" xml:space="preserve">
     <value>Security Failure.  You are not logged in.</value>
