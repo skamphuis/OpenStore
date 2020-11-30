@@ -175,10 +175,10 @@
     <value>&lt;i class='fa-li fa fa-file-o'&gt;&lt;/i&gt;</value>
   </data>
   <data name="from.Text" xml:space="preserve">
-    <value>Van</value>
+    <value>Vanaf</value>
   </data>
   <data name="fromlower.Text" xml:space="preserve">
-    <value>Van</value>
+    <value>Vanaf</value>
   </data>
   <data name="holidaymsg.Text" xml:space="preserve">
     <value>Gesloten voor vakantie</value>
@@ -276,58 +276,58 @@
   &lt;i class="fa fa-heart fa-stack-1x fa-inverse"&gt;&lt;/i&gt;
 &lt;/span&gt;</value>
   </data>
-  <data name="addedtobasket.Text">
+  <data name="addedtobasket.Text" xml:space="preserve">
     <value>Toegevoegd aan winkelwagen</value>
   </data>
-  <data name="addtobasketicon-lg.Text">
+  <data name="addtobasketicon-lg.Text" xml:space="preserve">
     <value>&lt;span title="Toevoegen aan winkelwagen" class="fa-stack fa-lg"&gt;
   &lt;i class="fa fa-stop fa-stack-2x"&gt;&lt;/i&gt;
   &lt;i class="fa fa-shopping-cart fa-stack-1x fa-inverse"&gt;&lt;/i&gt;
 &lt;/span&gt;</value>
   </data>
-  <data name="endoflineflag.Text">
+  <data name="endoflineflag.Text" xml:space="preserve">
     <value>End Of Line!</value>
   </data>
-  <data name="favorites.Text">
+  <data name="favorites.Text" xml:space="preserve">
     <value>Favorites</value>
   </data>
-  <data name="products.Text">
+  <data name="products.Text" xml:space="preserve">
     <value>products</value>
   </data>
-  <data name="productunavailable.Text">
+  <data name="productunavailable.Text" xml:space="preserve">
     <value>This product is currently unavailable.</value>
   </data>
-  <data name="promo.Text">
+  <data name="promo.Text" xml:space="preserve">
     <value>Promotional offer</value>
   </data>
-  <data name="promoflag.Text">
+  <data name="promoflag.Text" xml:space="preserve">
     <value>Promotion !</value>
   </data>
-  <data name="recommend.Text">
+  <data name="recommend.Text" xml:space="preserve">
     <value>With this product, we recommend :</value>
   </data>
-  <data name="references.Text">
+  <data name="references.Text" xml:space="preserve">
     <value>References</value>
   </data>
-  <data name="searchresults.Text">
+  <data name="searchresults.Text" xml:space="preserve">
     <value>Search Results</value>
   </data>
-  <data name="share.Text">
+  <data name="share.Text" xml:space="preserve">
     <value>Delen</value>
   </data>
-  <data name="viewicon-lg.Text">
+  <data name="viewicon-lg.Text" xml:space="preserve">
     <value>&lt;span title="Bekijk details" class="fa-stack fa-lg"&gt;
   &lt;i class="fa fa-stop fa-stack-2x"&gt;&lt;/i&gt;
   &lt;i class="fa fa-info fa-stack-1x fa-inverse"&gt;&lt;/i&gt;
 &lt;/span&gt;</value>
   </data>
-  <data name="wishlistaddicon-lg.Text">
+  <data name="wishlistaddicon-lg.Text" xml:space="preserve">
     <value>&lt;span title="Add to favorites" class="fa-stack fa-lg"&gt;
   &lt;i class="fa fa-stop fa-stack-2x"&gt;&lt;/i&gt;
   &lt;i class="fa fa-star-o fa-stack-1x fa-inverse"&gt;&lt;/i&gt;
 &lt;/span&gt;</value>
   </data>
-  <data name="wishlistremoveicon-lg.Text">
+  <data name="wishlistremoveicon-lg.Text" xml:space="preserve">
     <value>&lt;span title="Remove from favorites" class="fa-stack fa-lg"&gt;
   &lt;i class="fa fa-stop fa-stack-2x"&gt;&lt;/i&gt;
   &lt;i class="fa fa-star fa-stack-1x fa-inverse"&gt;&lt;/i&gt;
